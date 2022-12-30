@@ -45,6 +45,12 @@ Clone this repository (recommended under `~/.vscode/extensions`)
 git clone https://github.com/phil1436/ownvscodeextension C:\Users\<your-user>\.vscode\extensions\ownvscodeextension
 ````
 
+Go into your the cloned folder an run:
+
+````shell
+npm i translate
+````
+
 Then run the command `Developer: Install Extension from Location...` and choose the cloned repository.
 
 ---
