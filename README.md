@@ -95,7 +95,7 @@ Go to `File > Preferences > Settings` and than navigate to `Extensions > OwnVsco
 
 ### Translate
 
-* `Default Translate`: Default translate configuration for [Own Vscode Translate: Translate Selection](). Value is a array of objects:
+* `Default Translate`: Default translate configuration for [Own Vscode Translate: Translate Selection](https://github.com/phil1436/OwnVscodeExtension#own-vscode-translate). Value is a array of objects:
 
 ````
 [
