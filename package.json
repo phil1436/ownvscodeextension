@@ -2,7 +2,7 @@
    "name": "ownvscodeextension",
    "displayName": "OwnVscodeExtension",
    "description": "Providing tools for VSCode",
-   "version": "0.0.1",
+   "version": "0.0.2",
    "author": "Philipp B.",
    "publisher": "Philipp B.",
    "license": "MIT",
@@ -20,7 +20,14 @@
    "activationEvents": [
       "onCommand:ownvscodeextension.moveSelectionToLeft",
       "onCommand:ownvscodeextension.moveSelectionToRight",
-      "onCommand:ownvscodeextension.translateSelection"
+      "onCommand:ownvscodeextension.translateSelection",
+      "onCommand:ownvscodeextension.createSnapshot",
+      "onCommand:ownvscodeextension.restoreSnapshot",
+      "onCommand:ownvscodeextension.deleteSnapshot",
+      "onCommand:ownvscodeextension.deleteAllSnapshotsFromActiveFile",
+      "onCommand:ownvscodeextension.deleteAllSnapshots",
+      "onCommand:ownvscodeextension.viewSnapshot",
+      "onCommand:ownvscodeextension.viewSnapshotFromActiveFile"
    ],
    "main": "./extension.js",
    "contributes": {
@@ -28,17 +35,52 @@
          {
             "command": "ownvscodeextension.moveSelectionToLeft",
             "title": "Move Selection To Left",
-            "category": "Own Vscode Extension"
+            "category": "Own Vscode Move"
          },
          {
             "command": "ownvscodeextension.moveSelectionToRight",
             "title": "Move Selection To Right",
-            "category": "Own Vscode Extension"
+            "category": "Own Vscode Move"
          },
          {
             "command": "ownvscodeextension.translateSelection",
             "title": "Translate Selection",
-            "category": "Own Vscode Extension"
+            "category": "Own Vscode Translate"
+         },
+         {
+            "command": "ownvscodeextension.createSnapshot",
+            "title": "Create Snapshot of Active File",
+            "category": "Own Vscode Snapshot"
+         },
+         {
+            "command": "ownvscodeextension.restoreSnapshot",
+            "title": "Restore Snapshot of Active File",
+            "category": "Own Vscode Snapshot"
+         },
+         {
+            "command": "ownvscodeextension.deleteSnapshot",
+            "title": "Delete Snapshot",
+            "category": "Own Vscode Snapshot"
+         },
+         {
+            "command": "ownvscodeextension.deleteAllSnapshotsFromActiveFile",
+            "title": "Delete All Snapshots from Active File",
+            "category": "Own Vscode Snapshot"
+         },
+         {
+            "command": "ownvscodeextension.deleteAllSnapshots",
+            "title": "Delete All Snapshots",
+            "category": "Own Vscode Snapshot"
+         },
+         {
+            "command": "ownvscodeextension.viewSnapshot",
+            "title": "View Snapshot",
+            "category": "Own Vscode Snapshot"
+         },
+         {
+            "command": "ownvscodeextension.viewSnapshotFromActiveFile",
+            "title": "View Snapshot of Active File",
+            "category": "Own Vscode Snapshot"
          }
       ],
       "keybindings": [
@@ -54,7 +96,37 @@
             "mac": "options+Right",
             "when": "vscode.window.activeTextEditor != undefined && !vscode.window.activeTextEditor.selection.isEmpty"
          }
-      ]
+      ],
+      "configuration": {
+         "type": "object",
+         "title": "OwnVscodeExtension",
+         "properties": {
+            "ownvscodeextension.snapshot.DeleteSnapshotAfterRestore": {
+               "type": "boolean",
+               "default": false,
+               "markdownDescription": "If enabled deletes a snapshot after it gets restored."
+            },
+            "ownvscodeextension.snapshot.CreateSnapshotWhenRestore": {
+               "type": "boolean",
+               "default": true,
+               "markdownDescription": "If enabled creates a snapshot of the active file when a snapshot get restored."
+            },
+            "ownvscodeextension.translate.DefaultTranslate": {
+               "type": "array",
+               "default": [
+                  {
+                     "from": "en",
+                     "to": "de"
+                  },
+                  {
+                     "from": "de",
+                     "to": "en"
+                  }
+               ],
+               "markdownDescription": "Default translate configuration for `Own Vscode Translate: Translate Selection`.\n\nExample: `[{\"from\":\"en\",\"to\":\"de\"},...]`"
+            }
+         }
+      }
    },
    "scripts": {
       "lint": "eslint .",
