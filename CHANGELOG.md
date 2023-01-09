@@ -2,6 +2,13 @@
 
 ---
 
+## [v0.0.3](https://github.com/phil1436/ownvscodeextension/tree/0.0.3) (2023-1-9)
+
+* `Translate Selection` error message handling
+* `Translate Selection` now supports word selection by just have a cursor inside the word
+
+---
+
 ## [v0.0.2](https://github.com/phil1436/ownvscodeextension/tree/0.0.2) (2022-12-31)
 
 * Bug fixes
