@@ -34,6 +34,7 @@ Move the selected text to a direction in the same line.
 ### Translate Text
 
 Translates the selected text to a specified language.
+> Tip: Just put the cursor inside a word to translate to select the word.
 
 ### Working with Snapshots
 
@@ -57,7 +58,7 @@ or download the [latest realease](https://github.com/phil1436/ownvscodeextension
 npm install
 ````
 
-* If the extension didnt get installed run the command `Developer: Install Extension from Location...` and choose the extension folder.
+* If the extension did not got installed, run the command `Developer: Install Extension from Location...` and choose the extension folder.
 
 ---
 
@@ -97,14 +98,14 @@ Go to `File > Preferences > Settings` and than navigate to `Extensions > OwnVsco
 
 * `Default Translate`: Default translate configuration for [Own Vscode Translate: Translate Selection](https://github.com/phil1436/OwnVscodeExtension#own-vscode-translate). Value is a array of objects:
 
-````
+````json
 [
   {"from":"en","to":"de"},
   {"from":"en","to":"es"} ...
 ]
 ````
 
-Edit via *Edit in settings.json*.
+Edit via: *Edit in settings.json*.
 
 ---
 
@@ -115,6 +116,10 @@ Edit via *Edit in settings.json*.
 ---
 
 ## [Release Notes](https://github.com/phil1436/ownvscodeextension/blob/master/CHANGELOG.md)
+
+### [v0.0.3](https://github.com/phil1436/ownvscodeextension/tree/0.0.3)
+
+* `Translate Selection` expanded
 
 ### [v0.0.2](https://github.com/phil1436/ownvscodeextension/tree/0.0.2)
 
