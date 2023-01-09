@@ -140,29 +140,44 @@ function activate(context) {
       async function () {
          if (vscode.window.activeTextEditor == undefined) return;
          let selection = vscode.window.activeTextEditor.selection;
+
+         //get selected text
          if (selection.isEmpty) {
-            vscode.window.showInformationMessage('Select a Text!');
-            return;
+            let newRange =
+               vscode.window.activeTextEditor.document.getWordRangeAtPosition(
+                  selection.start
+               );
+            if (newRange == undefined) {
+               vscode.window.showInformationMessage('Select a Text!');
+               return;
+            }
+            selection = new vscode.Selection(newRange.start, newRange.end);
          }
+         //get selection text
+         let text = vscode.window.activeTextEditor.document.getText(selection);
+
+         //Get translation settings
          let from = undefined;
          let to = undefined;
          let settings = vscode.workspace.getConfiguration(
             'ownvscodeextension.translate'
          );
          if (settings['DefaultTranslate'].length == 0) {
+            //Ask for translate settings
             //from
             from = await vscode.window.showInputBox({
                placeHolder: 'from-language',
-               title: 'Translate From Language',
+               title: 'Translate: ' + text,
             });
             if (from == undefined) return;
             //to
             to = await vscode.window.showInputBox({
                placeHolder: 'to-language',
-               title: 'Translate To Language',
+               title: 'Translate: ' + text,
             });
             if (to == undefined) return;
          } else {
+            //Default translate
             let defaultTranslateSelection = undefined;
             let defaultOptions = settings['DefaultTranslate'].map(
                (value, index, array) => {
@@ -170,21 +185,25 @@ function activate(context) {
                }
             );
             defaultOptions.push('Custom');
-            await vscode.window.showQuickPick(defaultOptions).then((value) => {
-               defaultTranslateSelection = value;
-            });
+            await vscode.window
+               .showQuickPick(defaultOptions, {
+                  title: 'Translate: ' + text,
+               })
+               .then((value) => {
+                  defaultTranslateSelection = value;
+               });
             if (defaultTranslateSelection == undefined) return;
             if (defaultTranslateSelection == 'Custom') {
                //from
                from = await vscode.window.showInputBox({
                   placeHolder: 'from-language',
-                  title: 'Translate From Language',
+                  title: 'Translate: ' + text,
                });
                if (from == undefined) return;
                //to
                to = await vscode.window.showInputBox({
                   placeHolder: 'to-language',
-                  title: 'Translate To Language',
+                  title: 'Translate: ' + text,
                });
                if (to == undefined) return;
             } else {
@@ -193,11 +212,15 @@ function activate(context) {
             }
          }
 
-         //get selection text
-         let text = vscode.window.activeTextEditor.document.getText(selection);
          //translate
+         let translatedText;
          translate.from = from.toLowerCase();
-         let translatedText = await translate(text, to.toLowerCase());
+         try {
+            translatedText = await translate(text, to.toLowerCase());
+         } catch (e) {
+            vscode.window.showErrorMessage('' + e);
+            return;
+         }
          //make first character to lower or upper case
          if (text.charAt(0).toUpperCase() == text.charAt(0)) {
             translatedText =

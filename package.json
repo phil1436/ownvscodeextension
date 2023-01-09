@@ -2,7 +2,7 @@
    "name": "ownvscodeextension",
    "displayName": "OwnVscodeExtension",
    "description": "Providing tools for VSCode",
-   "version": "0.0.2",
+   "version": "0.0.3",
    "author": "Philipp B.",
    "publisher": "Philipp B.",
    "license": "MIT",
