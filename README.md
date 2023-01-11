@@ -114,11 +114,15 @@ Edit via: *Edit in settings.json*.
 
 ## Bugs
 
-* *no known bugs*
+* Snapshots are deleted when installing a new version. Store the [snapshots file](snapshots.json) to an other location an restore it after installing. 
 
 ---
 
 ## [Release Notes](https://github.com/phil1436/ownvscodeextension/blob/master/CHANGELOG.md)
+<!-- 
+### [v0.0.5](https://github.com/phil1436/ownvscodeextension/tree/0.0.5)
+
+*  -->
 
 ### [v0.0.4](https://github.com/phil1436/ownvscodeextension/tree/0.0.4)
 
