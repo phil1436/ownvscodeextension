@@ -2,24 +2,22 @@
 
 # OwnVscodeExtension
 
-Providing tools for VSCode.
+Providing tools for [Microsoft's Visual Studio Code](https://code.visualstudio.com/).
 
 ---
 
-* [Features](https://github.com/phil1436/OwnVscodeExtension#features)
-  * [Move Selection](https://github.com/phil1436/OwnVscodeExtension#move-selection)
-  * [Translate Text](https://github.com/phil1436/OwnVscodeExtension#translate-text)
-  * [Working with Snapshots](https://github.com/phil1436/OwnVscodeExtension#working-with-snapshots)
-* [Installation](https://github.com/phil1436/OwnVscodeExtension#installation)
-* [Commands](https://github.com/phil1436/OwnVscodeExtension#commands)
-  * [Own Vscode Move](https://github.com/phil1436/OwnVscodeExtension#own-vscode-move)
-  * [Own VScode Translate](https://github.com/phil1436/OwnVscodeExtension#own-vscode-translate)
-  * [Own VScode Snapshot](https://github.com/phil1436/OwnVscodeExtension#own-vscode-snapshot)
-* [Configuration](https://github.com/phil1436/OwnVscodeExtension#configuration)
-  * [Snapshot](https://github.com/phil1436/OwnVscodeExtension#snapshot)
-  * [Translate](https://github.com/phil1436/OwnVscodeExtension#translate)
-* [Bugs](https://github.com/phil1436/OwnVscodeExtension#bugs)
-* [Release Notes](https://github.com/phil1436/OwnVscodeExtension#release-notes)
+* [Features](#features)
+  * [Move Selection](#move-selection)
+  * [Translate Text](#translate-text)
+  * [Working with Snapshots](#working-with-snapshots)
+* [Installation](#installation)
+* [Commands](#commands)
+  * [Own Vscode Move](#own-vscode-move)
+  * [Own VScode Language](#own-vscode-language)
+  * [Own VScode Snapshot](#own-vscode-snapshot)
+* [Configuration](#configuration)
+* [Bugs](#bugs)
+* [Release Notes](#release-notes)
 
 ---
 
@@ -27,9 +25,9 @@ Providing tools for VSCode.
 
 ### Move Selection
 
-Move the selected text to a direction in the same line.
+Move the selected text to a direction.
 
-> Keyboard Shortcut: `Alt + LeftArrow|RightArrow` *(Mac: `Options + LeftArrow|RightArrow`)*
+> Keyboard Shortcut: `Alt + LeftArrow/RightArrow` *(Mac: `Options + LeftArrow/RightArrow`)*
 
 ### Translate Text
 
@@ -69,9 +67,10 @@ npm install
 * `Move Selection To Left`: Moves selected text to the left. (`Alt+LeftArrow`)
 * `Move Selection To Right`: Moves selected text to the right. (`Alt+RightArrow`)
 
-### Own VScode Translate
+### Own VScode Language
 
 * `Translate Selection`: Translates selected text.
+* `Check Spelling`: Check the selected text for spelling and suggest other words in case of wrong spelling (**only works for en-US!**).
 
 ### Own VScode Snapshot
 
@@ -93,6 +92,10 @@ Go to `File > Preferences > Settings` and than navigate to `Extensions > OwnVsco
 
 * `Create Snapshot When Restore`: If enabled creates a snapshot of the active file when a snapshot get restored (Default: *enabled*).
 * `Delete Snapshot After Restore`: If enabled deletes a snapshot after it gets restored (Default: *disabled*).
+
+### Move
+
+* `Move Between Lines`: If enabled move a word from the beginning of a line to the end of the line above or from the end of a line to the beginning of the line below (Default: *disabled*).
 
 ### Translate
 
@@ -116,6 +119,12 @@ Edit via: *Edit in settings.json*.
 ---
 
 ## [Release Notes](https://github.com/phil1436/ownvscodeextension/blob/master/CHANGELOG.md)
+
+### [v0.0.4](https://github.com/phil1436/ownvscodeextension/tree/0.0.4)
+
+* Command added
+* Category renamed
+* Commands extended
 
 ### [v0.0.3](https://github.com/phil1436/ownvscodeextension/tree/0.0.3)
 
