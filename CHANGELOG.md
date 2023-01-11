@@ -2,6 +2,15 @@
 
 ---
 
+## [v0.0.4](https://github.com/phil1436/ownvscodeextension/tree/0.0.4) (2023-1-11)
+
+* Command `Check Spelling` added
+* Category `Own Vscode Translate` renamed to `Own Vscode Language`
+* Configuration `Move: Move Between Lines` added
+* `Move Selection To Left` and `Move Selection To Right` can jump now between lines
+
+---
+
 ## [v0.0.3](https://github.com/phil1436/ownvscodeextension/tree/0.0.3) (2023-1-9)
 
 * `Translate Selection` error message handling
