@@ -2,7 +2,7 @@
    "name": "ownvscodeextension",
    "displayName": "OwnVscodeExtension",
    "description": "Providing tools for VSCode",
-   "version": "0.0.3",
+   "version": "0.0.4",
    "author": "Philipp B.",
    "publisher": "Philipp B.",
    "license": "MIT",
@@ -21,6 +21,7 @@
       "onCommand:ownvscodeextension.moveSelectionToLeft",
       "onCommand:ownvscodeextension.moveSelectionToRight",
       "onCommand:ownvscodeextension.translateSelection",
+      "onCommand:ownvscodeextension.checkSpelling",
       "onCommand:ownvscodeextension.createSnapshot",
       "onCommand:ownvscodeextension.restoreSnapshot",
       "onCommand:ownvscodeextension.deleteSnapshot",
@@ -45,7 +46,12 @@
          {
             "command": "ownvscodeextension.translateSelection",
             "title": "Translate Selection",
-            "category": "Own Vscode Translate"
+            "category": "Own Vscode Language"
+         },
+         {
+            "command": "ownvscodeextension.checkSpelling",
+            "title": "Check Spelling",
+            "category": "Own Vscode Language"
          },
          {
             "command": "ownvscodeextension.createSnapshot",
@@ -101,6 +107,11 @@
          "type": "object",
          "title": "OwnVscodeExtension",
          "properties": {
+            "ownvscodeextension.move.MoveBetweenLines": {
+               "type": "boolean",
+               "default": false,
+               "markdownDescription": "If enabled move a word from the beginning of a line to the end of the line above or from the end of a line to the beginning of the line below."
+            },
             "ownvscodeextension.snapshot.DeleteSnapshotAfterRestore": {
                "type": "boolean",
                "default": false,
@@ -145,6 +156,7 @@
       "typescript": "^4.8.4"
    },
    "dependencies": {
+      "spelling": "^2.0.2",
       "translate": "^1.4.1"
    }
 }

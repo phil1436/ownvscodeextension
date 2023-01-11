@@ -8,8 +8,12 @@ let snapshotJSON = JSON.parse(fs.readFileSync(snapshotFile).toString());
 
 //install translate
 let translate = undefined;
+let dict = undefined;
 try {
    translate = require('translate');
+   const spelling = require('spelling');
+   const dictionary = require('spelling/dictionaries/en_US');
+   dict = new spelling(dictionary);
 } catch (err) {
    vscode.window
       .showErrorMessage('Install dependencies!', ...['Install'])
@@ -38,7 +42,37 @@ function activate(context) {
          let selection = vscode.window.activeTextEditor.selection;
          if (selection.isEmpty) return;
          //return if at start of line
-         if (selection.start.character == 0) return;
+         if (selection.start.character == 0) {
+            if (
+               !vscode.workspace
+                  .getConfiguration('ownvscodeextension.move')
+                  .get('MoveBetweenLines')
+            )
+               return;
+            let newLine = undefined;
+            let newStartCharacter = undefined;
+            let text = undefined;
+            await vscode.window.activeTextEditor.edit(async (editBuilder) => {
+               newLine = selection.start.line - 1;
+               if (newLine < 0) return;
+               newStartCharacter =
+                  vscode.window.activeTextEditor.document.lineAt(newLine).text
+                     .length;
+               text =
+                  vscode.window.activeTextEditor.document.getText(selection);
+               editBuilder.delete(selection);
+               editBuilder.insert(
+                  new vscode.Position(newLine, newStartCharacter),
+                  text
+               );
+            });
+            if (newLine != undefined)
+               vscode.window.activeTextEditor.selection = new vscode.Selection(
+                  new vscode.Position(newLine, newStartCharacter),
+                  new vscode.Position(newLine, newStartCharacter + text.length)
+               );
+            return;
+         }
          let c = vscode.window.activeTextEditor.document.getText(
             new vscode.Range(
                new vscode.Position(
@@ -92,8 +126,29 @@ function activate(context) {
             selection.end.character ==
             vscode.window.activeTextEditor.document.lineAt(selection.start.line)
                .range.end.character
-         )
+         ) {
+            if (
+               !vscode.workspace
+                  .getConfiguration('ownvscodeextension.move')
+                  .get('MoveBetweenLines')
+            )
+               return;
+            let newLine = undefined;
+            let text = undefined;
+            await vscode.window.activeTextEditor.edit(async (editBuilder) => {
+               newLine = selection.start.line + 1;
+               text =
+                  vscode.window.activeTextEditor.document.getText(selection);
+               editBuilder.delete(selection);
+               editBuilder.insert(new vscode.Position(newLine, 0), text);
+            });
+            if (newLine != undefined)
+               vscode.window.activeTextEditor.selection = new vscode.Selection(
+                  new vscode.Position(newLine, 0),
+                  new vscode.Position(newLine, text.length)
+               );
             return;
+         }
          //get character after selection
          let c = vscode.window.activeTextEditor.document.getText(
             new vscode.Range(
@@ -135,6 +190,7 @@ function activate(context) {
       }
    );
 
+   // translate
    vscode.commands.registerCommand(
       'ownvscodeextension.translateSelection',
       async function () {
@@ -237,6 +293,105 @@ function activate(context) {
          vscode.window.activeTextEditor.edit((editBuilder) => {
             editBuilder.replace(selection, translatedText);
          });
+      }
+   );
+   //check spelling
+   vscode.commands.registerCommand(
+      'ownvscodeextension.checkSpelling',
+      async function () {
+         if (vscode.window.activeTextEditor == undefined) return;
+         let selection = vscode.window.activeTextEditor.selection;
+
+         //get selected text
+         if (selection.isEmpty) {
+            let newRange =
+               vscode.window.activeTextEditor.document.getWordRangeAtPosition(
+                  selection.start
+               );
+            if (newRange == undefined) {
+               vscode.window.showInformationMessage('Select a Text!');
+               return;
+            }
+            selection = new vscode.Selection(newRange.start, newRange.end);
+         }
+         //get selection text
+         let text = vscode.window.activeTextEditor.document.getText(selection);
+         let textArr = text.split(' ');
+         let allRight = true;
+         for (let i in textArr) {
+            let lookup = dict.lookup(textArr[i]);
+            if (!lookup['found']) {
+               allRight = false;
+               let suggestions = [];
+               for (let j in lookup['suggestions']) {
+                  suggestions.push(lookup['suggestions'][j]['word']);
+               }
+               if (suggestions.length == 0) {
+                  vscode.window.showInformationMessage(
+                     'Did not found "' + lookup['word'] + '"!'
+                  );
+                  continue;
+               }
+               vscode.window
+                  .showInformationMessage(
+                     'Did not found "' +
+                        lookup['word'] +
+                        '"! \nDid you mean: ' +
+                        suggestions,
+                     ...['Replace', 'Cancel']
+                  )
+                  .then(async (value) => {
+                     if (value == 'Cancel' || value == undefined) return;
+                     let replaceWord = undefined;
+                     if (suggestions.length == 1) replaceWord = suggestions[0];
+                     else {
+                        //get replace word from suggestions
+                        replaceWord = await vscode.window.showQuickPick(
+                           suggestions,
+                           { title: 'Replace: ' + lookup['word'] }
+                        );
+                     }
+                     if (replaceWord == undefined) return;
+                     text = text.replace(lookup['word'], replaceWord);
+
+                     //replace word
+                     vscode.window.activeTextEditor.edit((editBuilder) => {
+                        editBuilder.replace(selection, text);
+                     });
+
+                     //Set new selection
+                     let selectionLength =
+                        selection.end.character - selection.start.character;
+                     //make selection longer
+                     if (selectionLength < text.length) {
+                        selection = new vscode.Selection(
+                           selection.start,
+                           new vscode.Position(
+                              selection.end.line,
+                              selection.end.character +
+                                 (text.length - selectionLength)
+                           )
+                        );
+                     }
+                     //make selection shorter
+                     if (selectionLength > text.length) {
+                        selection = new vscode.Selection(
+                           selection.start,
+                           new vscode.Position(
+                              selection.end.line,
+                              selection.end.character -
+                                 (selectionLength - text.length)
+                           )
+                        );
+                     }
+                  });
+            }
+         }
+         if (allRight)
+            vscode.window.setStatusBarMessage(
+               'Everthing spelled correct',
+               3000
+            );
       }
    );
    //createSnapshot
