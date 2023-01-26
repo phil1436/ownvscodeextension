@@ -2,13 +2,42 @@ const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
 
-//snapshot.json
-const snapshotFile = path.join(__dirname, 'snapshots.json');
-let snapshotJSON = JSON.parse(fs.readFileSync(snapshotFile).toString());
+//workspace path
+const workspacePath = path.join(
+   __dirname,
+   '../',
+   'ownvscodeextension-workspace'
+);
 
 //snapshot.json
-const clipboardFile = path.join(__dirname, 'AdvancedClipboardFile.json');
-let clipboardJSON = JSON.parse(fs.readFileSync(clipboardFile).toString());
+let snapshotFile = undefined;
+let snapshotJSON = undefined;
+try {
+   snapshotFile = path.join(workspacePath, 'snapshots.json');
+
+   snapshotJSON = JSON.parse(fs.readFileSync(snapshotFile).toString());
+} catch (e) {
+   createWorkspace();
+
+   snapshotFile = path.join(workspacePath, 'snapshots.json');
+
+   snapshotJSON = JSON.parse(fs.readFileSync(snapshotFile).toString());
+}
+
+//advancedClipboardFile.json
+let clipboardFile = undefined;
+let clipboardJSON = undefined;
+try {
+   clipboardFile = path.join(workspacePath, 'advancedClipboardFile.json');
+
+   clipboardJSON = JSON.parse(fs.readFileSync(clipboardFile).toString());
+} catch (e) {
+   createWorkspace();
+
+   clipboardFile = path.join(workspacePath, 'advancedClipboardFile.json');
+
+   clipboardJSON = JSON.parse(fs.readFileSync(clipboardFile).toString());
+}
 
 //install translate
 let translate = undefined;
@@ -32,6 +61,7 @@ try {
       });
    translate = require('translate');
 }
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -673,7 +703,7 @@ function activate(context) {
                vscode.window.activeTextEditor.document.lineAt(
                   selection.start.line
                ).text;
-            if (text == undefined) {
+            if (text == undefined || text == '' || text == '\n') {
                vscode.window.showInformationMessage('Select a Text!');
                return;
             }
@@ -681,7 +711,17 @@ function activate(context) {
             text = vscode.window.activeTextEditor.document.getText(selection);
          }
          if (clipboardJSON.includes(text)) return;
+         if (
+            vscode.workspace
+               .getConfiguration('ownvscodeextension.clipboard')
+               .get('EmptyClipboardWhenCopy')
+         )
+            clipboardJSON = [];
          clipboardJSON.push(text);
+         vscode.window.setStatusBarMessage(
+            clipboardJSON.length + ' Items in Clipboard',
+            3000
+         );
          saveClipboardFile();
       }
    );
@@ -692,7 +732,6 @@ function activate(context) {
          let deleteClipboard = vscode.workspace
             .getConfiguration('ownvscodeextension.clipboard')
             .get('DeleteClipboardAfterPaste');
-         console.log(deleteClipboard);
          let text = undefined;
          if (clipboardJSON.length == 0) return;
          else if (clipboardJSON.length == 1) {
@@ -701,9 +740,13 @@ function activate(context) {
                clipboardJSON.pop();
             }
          } else {
-            await vscode.window.showQuickPick(clipboardJSON).then((value) => {
-               text = value;
-            });
+            await vscode.window
+               .showQuickPick(clipboardJSON, {
+                  title: 'Paste from Advanced Clipboard',
+               })
+               .then((value) => {
+                  text = value;
+               });
             if (deleteClipboard) {
                for (let i in clipboardJSON) {
                   if (clipboardJSON[i] == text) {
@@ -714,7 +757,6 @@ function activate(context) {
             }
          }
          if (text == undefined) return;
-         console.log(text);
          vscode.window.activeTextEditor.edit(async (editBuilder) => {
             if (vscode.window.activeTextEditor.selection.isEmpty)
                editBuilder.insert(
@@ -729,6 +771,30 @@ function activate(context) {
             }
             saveClipboardFile();
          });
+      }
+   );
+   //deleteFromAdvancedClipboard
+   vscode.commands.registerCommand(
+      'ownvscodeextension.deleteFromAdvancedClipboard',
+      async function () {
+         if (clipboardJSON.length == 0) return;
+         let text = undefined;
+         await vscode.window
+            .showQuickPick(clipboardJSON, {
+               title: 'Delete from Advanced Clipboard',
+            })
+            .then((value) => {
+               text = value;
+            });
+         if (text == undefined) return;
+         for (let i in clipboardJSON) {
+            if (clipboardJSON[i] == text) {
+               clipboardJSON.splice(i, 1);
+               break;
+            }
+         }
+
+         saveClipboardFile();
       }
    );
    //clearToAdvancedClipboard
@@ -784,6 +850,20 @@ function saveSnapshots() {
 
 function saveClipboardFile() {
    fs.writeFileSync(clipboardFile, JSON.stringify(clipboardJSON, null, 2));
+}
+
+function createWorkspace() {
+   //make workspace
+   fs.mkdir(workspacePath, (err) => {
+      if (err) throw err;
+   });
+   //make snapshot.json
+   fs.writeFileSync(path.join(workspacePath, 'snapshots.json'), '[]');
+   //make advancedClipboardFile.json
+   fs.writeFileSync(
+      path.join(workspacePath, 'advancedClipboardFile.json'),
+      '[]'
+   );
 }
 
 module.exports = {

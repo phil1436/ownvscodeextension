@@ -31,7 +31,8 @@
       "onCommand:ownvscodeextension.viewSnapshotFromActiveFile",
       "onCommand:ownvscodeextension.copyToAdvancedClipboard",
       "onCommand:ownvscodeextension.pasteToAdvancedClipboard",
-      "onCommand:ownvscodeextension.clearAdvancedClipboard"
+      "onCommand:ownvscodeextension.clearAdvancedClipboard",
+      "onCommand:ownvscodeextension.deleteFromAdvancedClipboard"
    ],
    "main": "./extension.js",
    "contributes": {
@@ -98,12 +99,17 @@
          },
          {
             "command": "ownvscodeextension.pasteToAdvancedClipboard",
-            "title": "Paste To Advanced Clipboard",
+            "title": "Paste From Advanced Clipboard",
             "category": "Own Vscode Clipboard"
          },
          {
             "command": "ownvscodeextension.clearAdvancedClipboard",
             "title": "Clear Advanced Clipboard",
+            "category": "Own Vscode Clipboard"
+         },
+         {
+            "command": "ownvscodeextension.deleteFromAdvancedClipboard",
+            "title": "Delete from Advanced Clipboard",
             "category": "Own Vscode Clipboard"
          }
       ],
@@ -156,6 +162,11 @@
                "type": "boolean",
                "default": false,
                "markdownDescription": "If enabled deletes the Clipboard entry after paste."
+            },
+            "ownvscodeextension.clipboard.EmptyClipboardWhenCopy": {
+               "type": "boolean",
+               "default": false,
+               "markdownDescription": "If enable overwrites all entries in the clipboard with the new entry (like normal clipboard)."
             },
             "ownvscodeextension.translate.DefaultTranslate": {
                "type": "array",
