@@ -2,6 +2,12 @@
 
 ---
 
+## [v0.0.5](https://github.com/phil1436/ownvscodeextension/tree/0.0.5) (2023-1-?)
+
+* 
+
+---
+
 ## [v0.0.4](https://github.com/phil1436/ownvscodeextension/tree/0.0.4) (2023-1-11)
 
 * Command `Check Spelling` added

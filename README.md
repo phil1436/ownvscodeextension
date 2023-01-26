@@ -119,10 +119,10 @@ Edit via: *Edit in settings.json*.
 ---
 
 ## [Release Notes](https://github.com/phil1436/ownvscodeextension/blob/master/CHANGELOG.md)
-<!-- 
+
 ### [v0.0.5](https://github.com/phil1436/ownvscodeextension/tree/0.0.5)
 
-*  -->
+* 
 
 ### [v0.0.4](https://github.com/phil1436/ownvscodeextension/tree/0.0.4)
 
