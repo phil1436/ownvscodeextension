@@ -2,7 +2,7 @@
    "name": "ownvscodeextension",
    "displayName": "OwnVscodeExtension",
    "description": "Providing tools for VSCode",
-   "version": "0.0.4",
+   "version": "0.0.5",
    "author": "Philipp B.",
    "publisher": "Philipp B.",
    "license": "MIT",
@@ -28,7 +28,10 @@
       "onCommand:ownvscodeextension.deleteAllSnapshotsFromActiveFile",
       "onCommand:ownvscodeextension.deleteAllSnapshots",
       "onCommand:ownvscodeextension.viewSnapshot",
-      "onCommand:ownvscodeextension.viewSnapshotFromActiveFile"
+      "onCommand:ownvscodeextension.viewSnapshotFromActiveFile",
+      "onCommand:ownvscodeextension.copyToAdvancedClipboard",
+      "onCommand:ownvscodeextension.pasteToAdvancedClipboard",
+      "onCommand:ownvscodeextension.clearAdvancedClipboard"
    ],
    "main": "./extension.js",
    "contributes": {
@@ -87,6 +90,21 @@
             "command": "ownvscodeextension.viewSnapshotFromActiveFile",
             "title": "View Snapshot of Active File",
             "category": "Own Vscode Snapshot"
+         },
+         {
+            "command": "ownvscodeextension.copyToAdvancedClipboard",
+            "title": "Copy To Advanced Clipboard",
+            "category": "Own Vscode Clipboard"
+         },
+         {
+            "command": "ownvscodeextension.pasteToAdvancedClipboard",
+            "title": "Paste To Advanced Clipboard",
+            "category": "Own Vscode Clipboard"
+         },
+         {
+            "command": "ownvscodeextension.clearAdvancedClipboard",
+            "title": "Clear Advanced Clipboard",
+            "category": "Own Vscode Clipboard"
          }
       ],
       "keybindings": [
@@ -101,6 +119,18 @@
             "key": "alt+Right",
             "mac": "options+Right",
             "when": "vscode.window.activeTextEditor != undefined && !vscode.window.activeTextEditor.selection.isEmpty"
+         },
+         {
+            "command": "ownvscodeextension.copyToAdvancedClipboard",
+            "key": "ctrl+alt+C",
+            "mac": "cmd+options+C",
+            "when": "vscode.window.activeTextEditor != undefined"
+         },
+         {
+            "command": "ownvscodeextension.pasteToAdvancedClipboard",
+            "key": "ctrl+alt+V",
+            "mac": "cmd+options+V",
+            "when": "vscode.window.activeTextEditor != undefined"
          }
       ],
       "configuration": {
@@ -121,6 +151,11 @@
                "type": "boolean",
                "default": true,
                "markdownDescription": "If enabled creates a snapshot of the active file when a snapshot get restored."
+            },
+            "ownvscodeextension.clipboard.DeleteClipboardAfterPaste": {
+               "type": "boolean",
+               "default": false,
+               "markdownDescription": "If enabled deletes the Clipboard entry after paste."
             },
             "ownvscodeextension.translate.DefaultTranslate": {
                "type": "array",

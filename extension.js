@@ -6,6 +6,10 @@ const path = require('path');
 const snapshotFile = path.join(__dirname, 'snapshots.json');
 let snapshotJSON = JSON.parse(fs.readFileSync(snapshotFile).toString());
 
+//snapshot.json
+const clipboardFile = path.join(__dirname, 'AdvancedClipboardFile.json');
+let clipboardJSON = JSON.parse(fs.readFileSync(clipboardFile).toString());
+
 //install translate
 let translate = undefined;
 let dict = undefined;
@@ -653,6 +657,88 @@ function activate(context) {
          }
       }
    );
+   //copyToAdvancedClipboard
+   vscode.commands.registerCommand(
+      'ownvscodeextension.copyToAdvancedClipboard',
+      async function () {
+         let selection = vscode.window.activeTextEditor.selection;
+         if (selection == undefined) {
+            vscode.window.showWarningMessage('Could not find a selection');
+            return;
+         }
+         let text = undefined;
+         if (selection.isEmpty) {
+            text =
+               '\n' +
+               vscode.window.activeTextEditor.document.lineAt(
+                  selection.start.line
+               ).text;
+            if (text == undefined) {
+               vscode.window.showInformationMessage('Select a Text!');
+               return;
+            }
+         } else {
+            text = vscode.window.activeTextEditor.document.getText(selection);
+         }
+         if (clipboardJSON.includes(text)) return;
+         clipboardJSON.push(text);
+         saveClipboardFile();
+      }
+   );
+   //pasteToAdvancedClipboard
+   vscode.commands.registerCommand(
+      'ownvscodeextension.pasteToAdvancedClipboard',
+      async function () {
+         let deleteClipboard = vscode.workspace
+            .getConfiguration('ownvscodeextension.clipboard')
+            .get('DeleteClipboardAfterPaste');
+         console.log(deleteClipboard);
+         let text = undefined;
+         if (clipboardJSON.length == 0) return;
+         else if (clipboardJSON.length == 1) {
+            text = clipboardJSON[0];
+            if (deleteClipboard) {
+               clipboardJSON.pop();
+            }
+         } else {
+            await vscode.window.showQuickPick(clipboardJSON).then((value) => {
+               text = value;
+            });
+            if (deleteClipboard) {
+               for (let i in clipboardJSON) {
+                  if (clipboardJSON[i] == text) {
+                     clipboardJSON.splice(i, 1);
+                     break;
+                  }
+               }
+            }
+         }
+         if (text == undefined) return;
+         console.log(text);
+         vscode.window.activeTextEditor.edit(async (editBuilder) => {
+            if (vscode.window.activeTextEditor.selection.isEmpty)
+               editBuilder.insert(
+                  vscode.window.activeTextEditor.selection.start,
+                  text
+               );
+            else {
+               editBuilder.replace(
+                  vscode.window.activeTextEditor.selection,
+                  text
+               );
+            }
+            saveClipboardFile();
+         });
+      }
+   );
+   //clearToAdvancedClipboard
+   vscode.commands.registerCommand(
+      'ownvscodeextension.clearAdvancedClipboard',
+      async function () {
+         clipboardJSON = [];
+         saveClipboardFile();
+      }
+   );
    context.subscriptions.push(disposable);
 }
 //FUNCTIONS------------------------------------------------------------------------------------
@@ -694,6 +780,10 @@ function deactivate() {}
  */
 function saveSnapshots() {
    fs.writeFileSync(snapshotFile, JSON.stringify(snapshotJSON, null, 2));
+}
+
+function saveClipboardFile() {
+   fs.writeFileSync(clipboardFile, JSON.stringify(clipboardJSON, null, 2));
 }
 
 module.exports = {
